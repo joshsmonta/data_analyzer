@@ -87,7 +87,7 @@ Create endpoints that serve the processed insights:
 
 ### Technology Stack
 - Backend: Python (FastAPI or Flask)
-- Database: Any SQL database (PostgreSQL recommended)
+- Database: Any SQL database (e.g., SQLite)
 - LLM Integration: OpenAI API or similar
 - (Optional) Frontend: React with any UI library
 
