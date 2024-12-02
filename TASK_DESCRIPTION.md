@@ -43,6 +43,8 @@ Process the collected data and use LLMs to extract useful insights, such as:
     - Most common issues (e.g., extracted from review text) to extract useful insights.
     - Number of reviews per product.
     - Percentage of positive/negative reviews.
+You will be provided with an OpenAI API key for this purpose.
+
 
 ### 3. Data Storage
 Design a database schema that efficiently stores and retrieves insights:
@@ -86,13 +88,13 @@ Create endpoints that serve the processed insights:
 ## Implementation Guidelines
 
 ### Technology Stack
-- Backend: Python (FastAPI or Flask)
+- Backend: Python (e.g., FastAPI)
 - Database: Any SQL database (e.g., SQLite)
-- LLM Integration: OpenAI API or similar
+- LLM Integration: OpenAI API
 - (Optional) Frontend: React with any UI library
 
 ### Getting Started
-1. Create a mock dataset of 1000 products with realistic data
+1. Create a mock dataset 
 2. Implement the core data collection and processing pipeline
 3. Add the API layer
 4. (Optional) Build the frontend
