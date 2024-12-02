@@ -39,17 +39,10 @@ Build a system that simulates fetching product data from Amazon's API:
 - Add realistic error scenarios (timeout, server errors)
 
 ### 2. Data Analysis
-Process the collected data to extract useful insights:
-
-**Required Analysis:**
-- Calculate key metrics:
-  - Average rating over time
-  - Review velocity (reviews per week)
-  - Sentiment trends
-- Use an LLM to:
-  - Categorize common issues from reviews
-  - Extract product feature feedback
-  - Identify potential quality concerns
+Process the collected data and use LLMs to extract useful insights, such as:
+    - Most common issues (e.g., extracted from review text) to extract useful insights.
+    - Number of reviews per product.
+    - Percentage of positive/negative reviews.
 
 ### 3. Data Storage
 Design a database schema that efficiently stores and retrieves insights:
@@ -71,14 +64,24 @@ Create endpoints that serve the processed insights:
   - Detailed insights for a specific product
   - Include historical trends
 
-### 5. (Optional) Frontend Dashboard
-Build a simple React dashboard to visualize the insights:
+### 5. (Bonus) 
+
+5.1 Frontend Dashboard: Build a simple React dashboard to visualize the insights:
 
 **Suggested Features:**
 - Product overview grid
 - Filtering by category/sentiment
 - Basic trend visualizations
 - Issue highlight cards
+
+
+5.2 While this is a prototype, please include comments or documentation about how you would enhance the system for production use, considering aspects like:
+- Docker configuration
+- Unit tests
+- Performance optimization
+- Monitoring setup
+- CI/CD considerations
+
 
 ## Implementation Guidelines
 
@@ -94,45 +97,9 @@ Build a simple React dashboard to visualize the insights:
 3. Add the API layer
 4. (Optional) Build the frontend
 
-## Evaluation Criteria
-
-### 1. Code Quality (30%)
-- Clean, readable code structure
-- Proper error handling
-- Good documentation
-- Type hints and validation
-
-### 2. System Design (30%)
-- Scalable architecture
-- Efficient data processing
-- Proper separation of concerns
-- Production-ready considerations
-
-### 3. Data Processing & AI Integration (20%)
-- Effective use of LLMs
-- Efficient data processing
-- Meaningful insights extraction
-- Error handling for AI components
-
-### 4. Problem Solving (20%)
-- Creative solutions
-- Performance optimization
-- Edge case handling
-- Business value focus
-
-## Bonus Points For:
-- Docker configuration
-- Unit tests
-- Performance optimization
-- Monitoring setup
-- CI/CD considerations
-
-## Time Expectation
-- Core Implementation: 2-3 hours
-- Optional Frontend: 1-2 additional hours
 
 ## Submission Guidelines
-1. Share your code via a private GitHub repository
+1. Share your code via this GitHub repository
 2. Include a README with:
    - Setup instructions
    - Architecture overview
@@ -142,10 +109,3 @@ Build a simple React dashboard to visualize the insights:
 
 ## Questions?
 Feel free to ask for clarification on any aspects of the task. We want you to have a clear understanding of the requirements while leaving room for creativity in the implementation.
-
-## Note on Production Readiness
-While this is a prototype, please include comments or documentation about how you would enhance the system for production use, considering aspects like:
-- Scaling to handle larger datasets
-- Monitoring and alerting
-- Security considerations
-- Performance optimization
