@@ -16,18 +16,12 @@ Load product data from provided JSON files containing information about products
 
 ```
 {
-  "products": [
-    {
-      "product_id": "P1",
-      "title": "Wireless Earbuds",
-      "reviews": [
-        {"review_id": "R1", "text": "Great sound quality!", "rating": 5},
-        {"review_id": "R2", "text": "Battery life could be better.", "rating": 3}
-      ]
-    }
-  ]
-}
-
+        "PRODUCT_BRAND": "Rhino USA",
+        "CUSTOMER_REVIEW_RATING": 5,
+        "CUSTOMER_REVIEW_TITLE": "Good option for portable potty",
+        "CUSTOMER_REVIEW_DESCRIPTION": "Ordered for a camping \"cassette\" style Bathroom set up. Works well, Good quality for the price.",
+        "CHILD_ASIN": "B0BTTL9LTC"
+    },
 ```
 
 ### 2. Data Analysis
