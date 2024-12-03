@@ -12,31 +12,23 @@ We want to see how you approach building scalable systems and solving real busin
 ## Core Requirements
 
 ### 1. Data Collection
-Build a system that simulates fetching product data from Amazon's API:
+Load product data from provided JSON files containing information about products and their associated reviews.
 
-```python
-# Example product data structure
-{
-    "product_id": "B07X6C9RMF",
-    "title": "Premium Kitchen Knife Set",
-    "price": 89.99,
-    "category": "Kitchen",
-    "reviews": [
-        {
-            "review_id": "R123ABC",
-            "text": "Great quality knives, but the holder could be better",
-            "rating": 4,
-            "date": "2024-01-15"
-        }
-    ]
-}
 ```
+{
+  "products": [
+    {
+      "product_id": "P1",
+      "title": "Wireless Earbuds",
+      "reviews": [
+        {"review_id": "R1", "text": "Great sound quality!", "rating": 5},
+        {"review_id": "R2", "text": "Battery life could be better.", "rating": 3}
+      ]
+    }
+  ]
+}
 
-**Requirements:**
-- Create a mock API that simulates realistic Amazon API behavior
-- Handle pagination (typical page size: 100 items)
-- Implement rate limiting (e.g., 5 requests per second)
-- Add realistic error scenarios (timeout, server errors)
+```
 
 ### 2. Data Analysis
 Process the collected data and use LLMs to extract useful insights, such as:
