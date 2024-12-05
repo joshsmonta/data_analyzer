@@ -1,0 +1,102 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Environment variables and secrets
+.env
+.env.*
+
+# Virtual environments
+venv/
+env/
+*.venv
+
+# FastAPI static files (if generated dynamically)
+staticfiles/
+
+# Logs
+*.log
+logs/
+debug.log
+
+# Unit test / coverage reports
+coverage/
+*.cover
+*.py,cover
+.hypothesis/
+.tox/
+.nox/
+.coverage
+.cache
+coverage.xml
+nosetests.xml
+pytest_cache/
+htmlcov/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# macOS system files
+.DS_Store
+
+# Visual Studio Code settings
+.vscode/
+
+# PyCharm settings
+.idea/
+
+# Docker and Kubernetes files
+*.pid
+*.log
+docker-compose.override.yml
+.dockerignore
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Editor backup files
+*~
+*.swp
+*.swo
+*.bak
+*.tmp
+*.orig
+*.rej
+
+# Pip environment files
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Local cache
+.cache/
+*.db
+*.sqlite3
+
+# Celery task queue results
+celerybeat-schedule
+celerybeat.pid
+
+# Migrations (Django or other ORMs)
+migrations/
+
+# Generated API documentation
+docs/_build/
