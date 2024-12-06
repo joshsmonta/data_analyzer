@@ -1,55 +1,52 @@
 import json
-import sqlite3
-import asyncio
+from pymongo import MongoClient
+from tqdm import tqdm
+from concurrent.futures import ProcessPoolExecutor
 import time
 
-async def import_data(file_path: str, cursor, connection):
+MONGO_URI = "mongodb://root:admin@mongo:27017/"
+DATABASE_NAME = "data_analyzer"
+COLLECTION_NAME = "product_reviews"
+
+def import_data(file_path: str):
+    client = MongoClient(MONGO_URI)
+    db = client[DATABASE_NAME]
+    collection = db[COLLECTION_NAME]
+    
     with open(file_path, "r") as f:
         data = json.load(f)
-    for record in data:
-        cursor.execute("""
-        INSERT INTO product_reviews (
-            product_brand,
-            customer_review_rating,
-            customer_review_title,
-            customer_review_desc,
-            child_asin
-        ) VALUES (?, ?, ?, ?, ?)
-        """, (
-            record["PRODUCT_BRAND"], 
-            record["CUSTOMER_REVIEW_RATING"], 
-            record["CUSTOMER_REVIEW_TITLE"], 
-            record["CUSTOMER_REVIEW_DESCRIPTION"],
-            record["CHILD_ASIN"]
-        ))
-        connection.commit()
-    return f"finished importing {file_path}"
+    
+    # Insert data into the collection
+    for record in tqdm(data, desc=f"{file_path} - Inserting Records", unit="record"):
+        # MongoDB will automatically create an `_id` field for each document
+        collection.insert_one({
+            "product_brand": record["PRODUCT_BRAND"],
+            "customer_review_rating": record["CUSTOMER_REVIEW_RATING"],
+            "customer_review_title": record["CUSTOMER_REVIEW_TITLE"],
+            "customer_review_desc": record["CUSTOMER_REVIEW_DESCRIPTION"],
+            "child_asin": record["CHILD_ASIN"]
+        })
+    
+    client.close()  # Close the MongoDB connection
+    return f"Finished importing {file_path}"
 
-async def main():
+def main():
     start_time = time.perf_counter()
-    connection = sqlite3.connect('./data/db.sqlite3')
-    cursor = connection.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS product_reviews (
-            product_brand VARCHAR,
-            customer_review_rating INTEGER,
-            customer_review_title VARCHAR,
-            customer_review_desc TEXT,
-            child_asin VARCHAR
-        )
-    """)
-    connection.commit()
-    await asyncio.gather(
-        import_data("./data/reviews_part_1.json", cursor, connection),
-        import_data("./data/reviews_part_2.json", cursor, connection),
-        import_data("./data/reviews_part_3.json", cursor, connection),
-        import_data("./data/reviews_part_4.json", cursor, connection)
-    )
-    connection.close()
+    # Use ProcessPoolExecutor for parallel imports
+    with ProcessPoolExecutor(max_workers=4) as executor:
+        file_paths = [f"./data/reviews_part_{x+1}.json" for x in range(4)]
+        results = [executor.submit(import_data, file_path) for file_path in file_paths]
+        
+        # Process results as they complete
+        for f in results:
+            print(f.result())
+         
     finish_time = time.perf_counter()
     print(f'Finished in {(finish_time-start_time)} second(s)')
-    
-asyncio.run(main())
+
+if __name__ == "__main__":
+    main()
+
 
         
     

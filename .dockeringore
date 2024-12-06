@@ -1,0 +1,36 @@
+# Exclude Python cache files and folders
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Exclude environment files
+.env
+.env.*
+
+# Exclude virtual environments
+venv/
+*.venv/
+
+# Exclude logs and temporary files
+*.log
+*.tmp
+*.swp
+
+# Exclude development and IDE settings
+.idea/
+.vscode/
+*.iml
+
+# Exclude Docker files and outputs
+Dockerfile*
+docker-compose*.yml
+*.dockerignore
+
+# Exclude test files and folders
+tests/
+*.test.*
+
+# Exclude unnecessary OS files
+.DS_Store
+Thumbs.db
