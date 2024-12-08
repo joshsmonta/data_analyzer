@@ -30,7 +30,7 @@ def import_data(file_path: str):
     client.close()  # Close the MongoDB connection
     return f"Finished importing {file_path}"
 
-def main():
+def process_data():
     start_time = time.perf_counter()
     # Use ProcessPoolExecutor for parallel imports
     with ProcessPoolExecutor(max_workers=4) as executor:

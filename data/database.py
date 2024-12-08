@@ -1,4 +1,4 @@
-from pymongo import MongoClient
+from motor.motor_asyncio import AsyncIOMotorClient 
 from typing import Optional
 import threading
 
@@ -14,12 +14,12 @@ class MongoDB:
         if MongoDB._instance is not None:
             raise Exception("Instance is already deployed. Use the `get_instance()` method.")
         
-        self.client = MongoClient(uri)
+        self.client = AsyncIOMotorClient(uri)
         self.db = self.client[db_name]
         MongoDB._instance = self  # Set the singleton instance
 
     @classmethod
-    def get_instance(cls, uri: str = MONGO_URI, db_name: str = DATABASE_NAME) -> "MongoDB":
+    def get_instance(cls, uri: str = MONGO_URI, db_name: str = DATABASE_NAME):
         """
         Returns the singleton instance of MongoDB client.
         Ensures that only one instance of MongoDB client is created.
@@ -39,13 +39,13 @@ class MongoDB:
         self.client.close()
 
 # Usage example
-if __name__ == "__main__":
-    # Get MongoDB Singleton instance
-    mongo_instance = MongoDB.get_instance(uri="mongodb://localhost:27017/", db_name="test_db")
-    collection = mongo_instance.get_collection("test_collection")
+# if __name__ == "__main__":
+#     # Get MongoDB Singleton instance
+#     mongo_instance = MongoDB.get_instance(uri="mongodb://localhost:27017/", db_name="test_db")
+#     collection = mongo_instance.get_collection("test_collection")
 
-    # Insert a document
-    collection.insert_one({"name": "Alice", "age": 30})
+#     # Insert a document
+#     collection.insert_one({"name": "Alice", "age": 30})
 
-    # Close the connection
-    mongo_instance.close()
+#     # Close the connection
+#     mongo_instance.close()
