@@ -5,21 +5,11 @@ from psycopg import Connection, conninfo
 from concurrent.futures import ProcessPoolExecutor
 import time
 
+CONN_URI = "postgresql://postgres:admin@172.17.0.2:5432/data_analyzer"
 TABLE_NAME = "product_reviews"
-
-conn_str = conninfo.make_conninfo(
-    host="127.0.0.1", 
-    port=5432, 
-    dbname="data_analyzer", 
-    user="postgres",
-    password="admin"
-)
-
-def import_data(file_path: str):
-    with Connection.connect(conninfo="postgresql://postgres:admin@postgres:5432/data_analyzer") as conn:
-        with conn.cursor() as cursor:
-            # Ensure the table exists
-            create_table_query = f"""
+with Connection.connect(conninfo=CONN_URI) as conn:
+    with conn.cursor() as cursor:
+        create_table_query = f"""
             CREATE TABLE IF NOT EXISTS {TABLE_NAME} (
                 id SERIAL PRIMARY KEY,
                 product_brand VARCHAR(255),
@@ -28,10 +18,14 @@ def import_data(file_path: str):
                 customer_review_desc TEXT,
                 child_asin VARCHAR(255)
             );
-            """
-            cursor.execute(create_table_query)
-            conn.commit()
-        
+        """
+        cursor.execute(create_table_query)
+        conn.commit()
+        cursor.close()
+        conn.close()
+def import_data(file_path: str):
+    with Connection.connect(conninfo=CONN_URI) as conn:
+        with conn.cursor() as cursor:
             with open(file_path, "r") as f:
                 data = json.load(f)
             insert_query = f"""
@@ -48,12 +42,11 @@ def import_data(file_path: str):
                     record["CHILD_ASIN"]
                 ))
                 conn.commit()
-
             cursor.close()
             conn.close()
     return f"Finished importing {file_path}"
 
-def process_data():
+def main():
     start_time = time.perf_counter()
     # Dynamically find all JSON files in the "raw_data" folder
     file_paths = glob.glob(os.path.join("./data/raw_data", "*.json"))
@@ -65,19 +58,18 @@ def process_data():
 
     print(f"Found {len(file_paths)} JSON files to process.")
     # Use ProcessPoolExecutor for parallel imports
-    import_data("./data/raw_data/reviews_part_1.json")
-    # with ProcessPoolExecutor(max_workers=4) as executor:
-    #     results = [executor.submit(import_data, file_path) for file_path in file_paths]
+    with ProcessPoolExecutor(max_workers=4) as executor:
+        results = [executor.submit(import_data, file_path) for file_path in file_paths]
         
-    #     # Process results as they complete
-    #     for f in results:
-    #         print(f.result())
+        # Process results as they complete
+        for f in results:
+            print(f.result())
          
     finish_time = time.perf_counter()
     print(f'Finished in {(finish_time-start_time)} second(s)')
 
 if __name__ == "__main__":
-    process_data()
+    main()
 
 
         

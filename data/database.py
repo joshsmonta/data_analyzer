@@ -1,51 +1,85 @@
-from motor.motor_asyncio import AsyncIOMotorClient 
+import psycopg
+from psycopg_pool import AsyncConnectionPool
 from typing import Optional
+import asyncio
 import threading
 
-MONGO_URI = "mongodb://root:admin@mongo:27017/"
-DATABASE_NAME = "data_analyzer"
-COLLECTION_NAME = "product_reviews"
+# Connection URI and database configuration
+POSTGRES_URI = "postgresql://postgres:admin@postgres:5432/data_analyzer"
 
-class MongoDB:
-    _instance: Optional["MongoDB"] = None
+class PostgresDB:
+    _instance: Optional["PostgresDB"] = None
     _lock = threading.Lock()
 
-    def __init__(self, uri: str = MONGO_URI, db_name: str = DATABASE_NAME):
-        if MongoDB._instance is not None:
-            raise Exception("Instance is already deployed. Use the `get_instance()` method.")
-        
-        self.client = AsyncIOMotorClient(uri)
-        self.db = self.client[db_name]
-        MongoDB._instance = self  # Set the singleton instance
+    def __init__(self, uri: str = POSTGRES_URI):
+        if PostgresDB._instance is not None:
+            raise Exception("This class is a singleton. Use `get_instance()` to access the instance.")
+        # Initialize the connection pool
+        self.pool = AsyncConnectionPool(conninfo=uri)
+        PostgresDB._instance = self
 
     @classmethod
-    def get_instance(cls, uri: str = MONGO_URI, db_name: str = DATABASE_NAME):
+    async def init(cls, uri: str = POSTGRES_URI):
         """
-        Returns the singleton instance of MongoDB client.
-        Ensures that only one instance of MongoDB client is created.
+        Initialize the singleton instance.
         """
         if cls._instance is None:
             with cls._lock:
                 if cls._instance is None:  # Double-checked locking
-                    cls._instance = MongoDB(uri, db_name)
+                    cls._instance = PostgresDB(uri)
         return cls._instance
 
-    def get_collection(self, collection_name: str):
-        """Retrieve a MongoDB collection"""
-        return self.db[collection_name]
+    @classmethod
+    async def get_instance(cls):
+        """
+        Retrieve the singleton instance.
+        """
+        if cls._instance is None:
+            raise Exception("Instance not initialized. Call `init()` before using `get_instance()`.")
+        return cls._instance
 
-    def close(self):
-        """Close the MongoDB client connection"""
-        self.client.close()
+    async def get_connection(self):
+        """
+        Get a connection from the connection pool.
+        """
+        await self.pool.open()
+        return await self.pool.getconn()
 
-# Usage example
-# if __name__ == "__main__":
-#     # Get MongoDB Singleton instance
-#     mongo_instance = MongoDB.get_instance(uri="mongodb://localhost:27017/", db_name="test_db")
-#     collection = mongo_instance.get_collection("test_collection")
+    async def release_connection(self, conn):
+        """
+        Release a connection back to the pool.
+        """
+        await self.pool.putconn(conn)
 
-#     # Insert a document
-#     collection.insert_one({"name": "Alice", "age": 30})
+    async def close(self):
+        """
+        Close the connection pool and cleanup resources.
+        """
+        await self.pool.close()
+        PostgresDB._instance = None  # Reset the singleton instance
 
-#     # Close the connection
-#     mongo_instance.close()
+# Example Usage
+async def main():
+    # Initialize the singleton instance
+    await PostgresDB.init()
+
+    # Get the singleton instance
+    db = await PostgresDB.get_instance()
+
+    # Get a connection from the pool
+    conn = await db.get_connection()
+    try:
+        # Perform a query
+        async with conn.cursor() as cur:
+            await cur.execute("SELECT 1;")
+            result = await cur.fetchone()
+            print(result)
+    finally:
+        # Release the connection back to the pool
+        await db.release_connection(conn)
+
+    # Close the connection pool when done
+    await db.close()
+
+# Run the example
+asyncio.run(main())
